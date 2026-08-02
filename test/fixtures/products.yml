@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  sync_key: product-one
+  name: Keyboard
+  price: 1500.00
+  stock: 10
+  category: Electronics
+  sheet_managed: false
+  last_synced_at: 2026-08-02 14:46:35
+
+two:
+  sync_key: product-two
+  name: Mouse
+  price: 500.00
+  stock: 20
+  category: Electronics
+  sheet_managed: false
+  last_synced_at: 2026-08-02 14:46:35

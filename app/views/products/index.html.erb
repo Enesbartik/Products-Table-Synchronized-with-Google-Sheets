@@ -1,0 +1,59 @@
+<h1>Products</h1>
+
+
+<% if notice.present? %>
+  <p><%= notice %></p>
+<% end %>
+
+<% if alert.present? %>
+  <p><%= alert %></p>
+<% end %>
+
+<p>
+  <%= link_to "New Product", new_product_path %>
+
+  <%= button_to "Sync from Google Sheets",
+                sheet_sync_path,
+                method: :post %>
+</p>
+
+<% if @products.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Category</th>
+        <th>Sheet Managed</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% @products.each do |product| %>
+        <tr>
+          <td><%= product.name %></td>
+          <td><%= product.price %> TL</td>
+          <td><%= product.stock %></td>
+          <td><%= product.category %></td>
+          <td><%= product.sheet_managed? ? "Yes" : "No" %></td>
+
+          <td>
+            <%= link_to "Show", product %>
+            <%= link_to "Edit", edit_product_path(product) %>
+
+            <%= button_to "Delete",
+                          product,
+                          method: :delete,
+                          data: {
+                            turbo_confirm: "Are you sure?"
+                          } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>No products have been created yet.</p>
+<% end %>

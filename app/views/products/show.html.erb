@@ -1,0 +1,40 @@
+<% if notice.present? %>
+  <p><%= notice %></p>
+<% end %>
+
+<h1><%= @product.name %></h1>
+
+<p>
+  <strong>Price:</strong>
+  <%= @product.price %> TL
+</p>
+
+<p>
+  <strong>Stock:</strong>
+  <%= @product.stock %>
+</p>
+
+<p>
+  <strong>Category:</strong>
+  <%= @product.category.presence || "-" %>
+</p>
+
+<p>
+  <strong>Sync Key:</strong>
+  <%= @product.sync_key %>
+</p>
+
+<p>
+  <strong>Sheet Managed:</strong>
+  <%= @product.sheet_managed? ? "Yes" : "No" %>
+</p>
+
+<p>
+  <%= link_to "Edit product", edit_product_path(@product) %>
+  <%= link_to "Back to products", products_path %>
+</p>
+
+<%= button_to "Delete product",
+              @product,
+              method: :delete,
+              data: { turbo_confirm: "Are you sure?" } %>
