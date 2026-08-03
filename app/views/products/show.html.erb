@@ -1,40 +1,93 @@
-<% if notice.present? %>
-  <p><%= notice %></p>
-<% end %>
+<div class="page-header">
+  <div>
+    <h1 class="page-title"><%= @product.name %></h1>
 
-<h1><%= @product.name %></h1>
+    <p class="page-description">
+      Product details and synchronization information.
+    </p>
+  </div>
 
-<p>
-  <strong>Price:</strong>
-  <%= @product.price %> TL
-</p>
+  <div class="page-actions">
+    <%= link_to "Edit",
+                edit_product_path(@product),
+                class: "button" %>
 
-<p>
-  <strong>Stock:</strong>
-  <%= @product.stock %>
-</p>
+    <%= link_to "Back",
+                products_path,
+                class: "button button--secondary" %>
 
-<p>
-  <strong>Category:</strong>
-  <%= @product.category.presence || "-" %>
-</p>
+    <%= button_to "Delete",
+                  @product,
+                  method: :delete,
+                  class: "button button--danger",
+                  data: {
+                    turbo_confirm: "Are you sure?"
+                  } %>
+  </div>
+</div>
 
-<p>
-  <strong>Sync Key:</strong>
-  <%= @product.sync_key %>
-</p>
+<div class="card">
+  <div class="card__body">
+    <div class="detail-grid">
+      <div class="detail-item">
+        <span class="detail-item__label">Price</span>
 
-<p>
-  <strong>Sheet Managed:</strong>
-  <%= @product.sheet_managed? ? "Yes" : "No" %>
-</p>
+        <span class="detail-item__value">
+          <%= number_to_currency(
+                @product.price,
+                unit: "₺",
+                format: "%n %u"
+              ) %>
+        </span>
+      </div>
 
-<p>
-  <%= link_to "Edit product", edit_product_path(@product) %>
-  <%= link_to "Back to products", products_path %>
-</p>
+      <div class="detail-item">
+        <span class="detail-item__label">Stock</span>
 
-<%= button_to "Delete product",
-              @product,
-              method: :delete,
-              data: { turbo_confirm: "Are you sure?" } %>
+        <span class="detail-item__value">
+          <%= @product.stock %>
+        </span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item__label">Category</span>
+
+        <span class="detail-item__value">
+          <%= @product.category.presence || "-" %>
+        </span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item__label">Source</span>
+
+        <span class="detail-item__value">
+          <% if @product.sheet_managed? %>
+            <span class="badge badge--success">
+              Google Sheets
+            </span>
+          <% else %>
+            <span class="badge badge--neutral">
+              Local
+            </span>
+          <% end %>
+        </span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item__label">Sync Key</span>
+
+        <span class="detail-item__value">
+          <%= @product.sync_key %>
+        </span>
+      </div>
+
+      <div class="detail-item">
+        <span class="detail-item__label">Last Synced</span>
+
+        <span class="detail-item__value">
+          <%= @product.last_synced_at&.strftime("%d.%m.%Y %H:%M") || "Never" %>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>

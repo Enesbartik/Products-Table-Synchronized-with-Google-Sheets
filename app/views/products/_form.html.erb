@@ -1,6 +1,6 @@
 <%= form_with model: product do |form| %>
   <% if product.errors.any? %>
-    <div>
+    <div class="validation-errors">
       <h2>
         <%= pluralize(product.errors.count, "error") %>
         prevented this product from being saved:
@@ -14,27 +14,47 @@
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :name %><br>
-    <%= form.text_field :name %>
+  <div class="form-group">
+    <%= form.label :name %>
+
+    <%= form.text_field :name,
+                        class: "form-control",
+                        placeholder: "Example: Mechanical Keyboard" %>
   </div>
 
-  <div>
-    <%= form.label :price %><br>
-    <%= form.number_field :price, step: 0.01, min: 0 %>
+  <div class="form-group">
+    <%= form.label :price %>
+
+    <%= form.number_field :price,
+                          step: 0.01,
+                          min: 0,
+                          class: "form-control",
+                          placeholder: "0.00" %>
   </div>
 
-  <div>
-    <%= form.label :stock %><br>
-    <%= form.number_field :stock, step: 1, min: 0 %>
+  <div class="form-group">
+    <%= form.label :stock %>
+
+    <%= form.number_field :stock,
+                          step: 1,
+                          min: 0,
+                          class: "form-control",
+                          placeholder: "0" %>
   </div>
 
-  <div>
-    <%= form.label :category %><br>
-    <%= form.text_field :category %>
+  <div class="form-group">
+    <%= form.label :category %>
+
+    <%= form.text_field :category,
+                        class: "form-control",
+                        placeholder: "Example: Electronics" %>
   </div>
 
-  <div>
+  <div class="form-actions">
     <%= form.submit %>
+
+    <%= link_to "Cancel",
+                products_path,
+                class: "button button--secondary" %>
   </div>
 <% end %>
