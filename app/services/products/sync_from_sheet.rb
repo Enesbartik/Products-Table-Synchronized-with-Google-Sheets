@@ -58,6 +58,7 @@ end
           Product.new
         end
 
+      product.skip_sheet_sync = true  
       new_record = product.new_record?
 
       product.assign_attributes(
@@ -92,15 +93,22 @@ end
     end
 
     def delete_missing_products(seen_sync_keys, result)
-      products_to_delete = Product.where(sheet_managed: true)
+  products_to_delete = Product.where(sheet_managed: true)
 
-      if seen_sync_keys.any?
-        products_to_delete =
-          products_to_delete.where.not(sync_key: seen_sync_keys)
-      end
+  if seen_sync_keys.any?
+    products_to_delete =
+      products_to_delete.where.not(
+        sync_key: seen_sync_keys
+      )
+  end
 
-      result[:deleted] = products_to_delete.destroy_all.count
-    end
+  products_to_delete.find_each do |product|
+    product.skip_sheet_sync = true
+    product.destroy!
+
+    result[:deleted] += 1
+  end
+end
 
     def write_success(row_number, product)
       @client.batch_update(
