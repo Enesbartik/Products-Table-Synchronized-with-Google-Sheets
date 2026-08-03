@@ -26,6 +26,33 @@ module GoogleSheets
       response.values || []
     end
 
+    def append_values(range, values)
+      value_range = Google::Apis::SheetsV4::ValueRange.new(
+        values: values
+      )
+
+      @service.append_spreadsheet_value(
+        spreadsheet_id,
+        range,
+        value_range,
+        value_input_option: "RAW",
+        insert_data_option: "INSERT_ROWS"
+      )
+    end
+
+    def update_values(range, values)
+      value_range = Google::Apis::SheetsV4::ValueRange.new(
+        values: values
+      )
+
+      @service.update_spreadsheet_value(
+        spreadsheet_id,
+        range,
+        value_range,
+        value_input_option: "RAW"
+      )
+    end
+
     def batch_update(updates)
       value_ranges = updates.map do |update|
         Google::Apis::SheetsV4::ValueRange.new(
@@ -45,6 +72,35 @@ module GoogleSheets
       )
     end
 
+    def delete_row(worksheet_name, row_number)
+      worksheet_id = find_worksheet_id(worksheet_name)
+
+      dimension_range = Google::Apis::SheetsV4::DimensionRange.new(
+        sheet_id: worksheet_id,
+        dimension: "ROWS",
+        start_index: row_number - 1,
+        end_index: row_number
+      )
+
+      delete_request = Google::Apis::SheetsV4::DeleteDimensionRequest.new(
+        range: dimension_range
+      )
+
+      request = Google::Apis::SheetsV4::Request.new(
+        delete_dimension: delete_request
+      )
+
+      batch_request =
+        Google::Apis::SheetsV4::BatchUpdateSpreadsheetRequest.new(
+          requests: [request]
+        )
+
+      @service.batch_update_spreadsheet(
+        spreadsheet_id,
+        batch_request
+      )
+    end
+
     private
 
     def authorization
@@ -61,6 +117,21 @@ module GoogleSheets
         :google_sheets,
         :spreadsheet_id
       )
+    end
+
+    def find_worksheet_id(worksheet_name)
+      spreadsheet = @service.get_spreadsheet(
+        spreadsheet_id,
+        fields: "sheets.properties"
+      )
+
+      worksheet = spreadsheet.sheets.find do |sheet|
+        sheet.properties.title == worksheet_name
+      end
+
+      raise ArgumentError, "Worksheet not found: #{worksheet_name}" if worksheet.nil?
+
+      worksheet.properties.sheet_id
     end
   end
 end
