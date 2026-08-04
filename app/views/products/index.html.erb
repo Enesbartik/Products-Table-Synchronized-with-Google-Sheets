@@ -19,6 +19,86 @@
   </div>
 </div>
 
+
+<div class="filter-panel">
+  <h2>Filter Products</h2>
+
+  <%= form_with url: products_path,
+                method: :get,
+                local: true,
+                class: "filter-form" do |form| %>
+
+    <div class="filter-field">
+      <%= form.label :name, "Product name" %>
+
+      <%= form.text_field :name,
+                          value: params[:name],
+                          placeholder: "Search by name" %>
+    </div>
+
+    <div class="filter-field">
+      <%= form.label :category, "Category" %>
+
+      <%= form.select :category,
+                      options_for_select(
+                        @categories,
+                        params[:category]
+                      ),
+                      {
+                        include_blank: "All categories"
+                      } %>
+    </div>
+
+    <div class="filter-field">
+      <%= form.label :min_price, "Minimum price" %>
+
+      <%= form.number_field :min_price,
+                            value: params[:min_price],
+                            min: 0,
+                            step: 0.01 %>
+    </div>
+
+    <div class="filter-field">
+      <%= form.label :max_price, "Maximum price" %>
+
+      <%= form.number_field :max_price,
+                            value: params[:max_price],
+                            min: 0,
+                            step: 0.01 %>
+    </div>
+
+    <div class="filter-field">
+      <%= form.label :sheet_managed, "Source" %>
+
+      <%= form.select :sheet_managed,
+                      options_for_select(
+                        [
+                          ["All products", ""],
+                          ["Google Sheets", "true"],
+                          ["Local", "false"]
+                        ],
+                        params[:sheet_managed]
+                      ) %>
+    </div>
+
+    <div class="filter-actions">
+      <%= form.submit "Apply Filters",
+                      class: "button button-primary" %>
+
+      <%= link_to "Clear Filters",
+                  products_path,
+                  class: "button button-secondary" %>
+    </div>
+  <% end %>
+</div>
+
+<p class="filter-result-count">
+  <strong><%= @products.count %></strong>
+  product(s) found
+</p>
+
+
+
 <div class="card">
   <% if @products.any? %>
     <div class="table-wrapper">

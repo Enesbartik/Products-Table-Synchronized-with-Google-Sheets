@@ -91,3 +91,49 @@
     </div>
   </div>
 </div>
+
+
+<% if @related_products.any? %>
+  <section class="related-products">
+    <h2>
+      Other products in
+      <%= @product.category %>
+    </h2>
+
+    <div class="related-products-grid">
+      <% @related_products.each do |product| %>
+        <article class="related-product-card">
+          <h3>
+            <%= link_to product.name, product_path(product) %>
+          </h3>
+
+          <p>
+            <strong>Price:</strong>
+            <%= number_to_currency(product.price) %>
+          </p>
+
+          <p>
+            <strong>Stock:</strong>
+            <%= product.stock %>
+          </p>
+
+          <p>
+            <% if product.sheet_managed? %>
+              <span class="badge badge-sheet">
+                Google Sheets
+              </span>
+            <% else %>
+              <span class="badge badge-local">
+                Local
+              </span>
+            <% end %>
+          </p>
+
+          <%= link_to "View Product",
+                      product_path(product),
+                      class: "button button-secondary" %>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% end %>

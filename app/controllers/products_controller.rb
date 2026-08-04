@@ -1,12 +1,65 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[show edit update destroy]
 
-  def index
-    @products = Product.order(created_at: :desc)
+def index
+  @products = Product.all
+
+  if params[:name].present?
+    safe_name = Product.sanitize_sql_like(params[:name].strip.downcase)
+
+    @products = @products.where(
+      "LOWER(name) LIKE ?",
+      "%#{safe_name}%"
+    )
   end
 
-  def show
+  if params[:category].present?
+    @products = @products.where(
+      category: params[:category]
+    )
   end
+
+  case params[:sheet_managed]
+  when "true"
+    @products = @products.where(sheet_managed: true)
+  when "false"
+    @products = @products.where(sheet_managed: false)
+  end
+
+  if params[:min_price].present?
+    @products = @products.where(
+      "price >= ?",
+      params[:min_price]
+    )
+  end
+
+  if params[:max_price].present?
+    @products = @products.where(
+      "price <= ?",
+      params[:max_price]
+    )
+  end
+
+  @products = @products.order(created_at: :desc)
+
+  @categories = Product
+    .where.not(category: [nil, ""])
+    .distinct
+    .order(:category)
+    .pluck(:category)
+end
+
+ def show
+  if @product.category.present?
+    @related_products = Product
+      .where(category: @product.category)
+      .where.not(id: @product.id)
+      .order(created_at: :desc)
+      .limit(5)
+  else
+    @related_products = Product.none
+  end
+end
 
   def new
     @product = Product.new

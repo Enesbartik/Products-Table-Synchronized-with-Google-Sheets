@@ -66,4 +66,9 @@ group :test do
 
 end
 
+group :test do
+  gem "minitest-mock"
+end
+
+
 gem "google-apis-sheets_v4"
